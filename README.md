@@ -8,7 +8,7 @@ __Team members:__
 - ...
 
 ## Description ##
-For this module you will be making a game using a Express, WebSockets, and
+For this module you will be making a game using Express, WebSockets, and
 MongoDB. Your final product will need to have these components:
 
 - A view to watch the game in real time.
