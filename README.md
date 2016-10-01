@@ -21,7 +21,7 @@ Google says that the definition of "game" is "a form of play or sport" and who
 are we to argue with Google. You could do something relatively simple like
 [Twitch Plays Tic-tac-toe](https://en.wikipedia.org/wiki/Twitch_Plays_Pok%C3%A9mon)
 to something as complicated as your own
-[MUD](https://en.wikipedia.org/wiki/MUD). It doesn't need to elaborate or
+[MUD](https://en.wikipedia.org/wiki/MUD). It doesn't need to be elaborate or
 highly visual.
 
 ## Watching the game ##
