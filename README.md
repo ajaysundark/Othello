@@ -9,6 +9,12 @@ __Team members:__
 
 __Heroku URL:__ _url_
 
+__Argument of ambition:__
+_Briefly argue why this was a technically ambitious project_
+
+__Argument of execution:__
+_Briefly argue why this was a well executed project_
+
 ## Description ##
 For this module you will be making a multi-user, online game using Express,
 WebSockets, and MongoDB. Your final product will need to have these components:
@@ -30,29 +36,25 @@ highly visual.
 You need to write an web API that will let people easily write clients to play your
 game. Suppose our game is [tug-of-war](https://en.wikipedia.org/wiki/Tug_of_war).
 Then I would want to be able to get `/rope-position` for information about the
-current position of the rope (preferably in
-[JSON format](https://en.wikipedia.org/wiki/JSON)) and post to `/pull-on-left`
+current position of the rope in
+[JSON format](https://en.wikipedia.org/wiki/JSON) and post to `/pull-on-left`
 or `/pull-on-right` to affect the state of the game.
 
-> **max**: I'd like to require JSON, not just suggest it
-
-You will need to have some way of testing and demonstrating your game. This likely
-means you will want to build a client. You are free to use whatever tools you
-want here as long as they are interacting via your API. I personally would use
-[requests or httplib2 in python](http://stackoverflow.com/questions/4476373/simple-url-get-post-function-in-python).
-
-> **max**: I don't like the wording that they should "build a client".  I understand what you mean, but I think it should be worded more neutrally, like "you will develop a set of tools, scripts, or code that will test and demonstrate the capabilities of your API".
+You will need to develop a set of tools, scripts, or code that will test and
+demonstrate the capabilities of your API. You can use whatever languages you
+want to accomplish this. Both
+[node.js](http://stackoverflow.com/questions/5643321/how-to-make-remote-rest-call-inside-node-js-any-curl/5643366#5643366)
+and
+[python](http://stackoverflow.com/questions/4476373/simple-url-get-post-function-in-python)
+are capable of this. There is a good chance your favorite language can do it
+also.
 
 If you just want to poke at your API a little bit you can use tools like
+[Postman](https://www.getpostman.com/) and
 [Advanced REST client](https://chrome.google.com/webstore/detail/advanced-rest-client/hgmloofddffdnphfgcellkdfbfbjeloo?hl=en-US)
-for chrome or [curl](https://curl.haxx.se/docs/manpage.html) on the command line.
+as in browser options or
+[curl](https://curl.haxx.se/docs/manpage.html) on the command line.
 Curl has the benefit that it is available on almost all systems.
-
-> **max**: I haven't used advanced REST client, but I've used the other two.  I use https://www.getpostman.com/ for movielens development, and it's pretty awesome, it does allow you to save your queries to quickly re-run them.  
-
-> **max**: I don't like recommending a python tool as first choice when this class is so focused on javascript -- node is really good at this, too.  Maybe convert to a less opinionated list, and include node.js as an option?  http://stackoverflow.com/a/5643366/293087
-
-> **max**: do you think we will be able to evaluate this?  I mean, we might instead choose to require something that we can actually run against their heroku instance to prove that it works.  E.g., this could be a README that simply steps through the basic commands, it could be a set of scripts that contain curl commands, it could be a CLI like the one that I demoed to you.
 
 ### Watching the game ###
 Create a view for spectators. Your players will be interacting via your API,
@@ -66,16 +68,19 @@ as the board fills up. If you were doing hangman, I would want to see the
 gallows being built. You don't need fancy graphics, just provide some way of
 conveying action.
 
-> **max**: ideas to offer: (a) twitter-like stream of events, (b) scoreboard, (c) live-updating charts.  (I think the existing ideas are ok, but they place the focus on home-built graphics, which are hard and out of scope)
+Other potential options:
+
+- twitter-like stream of events
+- scoreboard
+- live-updating charts
 
 
 ### Stats overview ###
-The final requirement is some statistics page for the game. This can be
+The final requirement is some statistics web page for the game. This can be
 displaying the number of times a person took a specific action, the amount of
 time that it took a game to finish, et cetera. Show any statistics that you
-think would be interesting for your specific game.
-
-> **max**: it's unclear if this is an API endpoint or a web page.  If a web page, is it web sockets or static?
+think would be interesting for your specific game. You can make this static or
+use web sockets to update content live here.
 
 ## Setting up your database ##
 Someone from each group should create an account with [mLab](https://mlab.com/)
@@ -93,8 +98,16 @@ forward your traffic on to mLab.
 ## Submission ##
 - Your code should be pushed up to your repo on github
 - Fill this `README.md` out with your team name, team members' emails, and
-  Heroku url for your demo.
+  Heroku url for your demo. Additionally, complete the argument sections at the
+  top of the file.
 - Create a file called `API.md` that documents your api endpoints and how to
-  use them.
+  use them. These should include a valid `curl` command and a description of its
+  expected output.
 
-> **max**: needs a section on how we will grade the projects
+## Grading ##
+You will be graded on the __ambition__ and __execution__ of the project. At
+the top of this `README.md` you have the opportunity to argue why your
+submission was ambitious and well executed. In order for us to grade it, you
+must have it hosted on Heroku. To earn an "A" grade, a project must be
+technically ambitious, well-executed, and polished. To earn a passing grade, a
+project must minimally fulfill the three requirements listed in the description.
