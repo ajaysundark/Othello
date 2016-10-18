@@ -1,0 +1,50 @@
+html, body{
+	height: 100%;
+	margin:0;
+}
+.container{ 
+	min-height: 100%;
+	background-color: black;
+}
+
+h1{
+	font-family: "san-serif", "tahoma";
+	color: #00ff00;
+	text-align: center;
+	font-size: 75px;
+	padding-top: 100px;
+}
+
+.userName{
+	display: block;
+	margin: 0 auto;
+	margin-top: 25	0px;
+	width: 500px;
+	height: 100px;
+	background-color: #fdf9f3;
+	padding-top: 50px;
+	border-radius: 15px;
+	-webkit-box-shadow:0 0 20px white;
+  -moz-box-shadow: 0 0 20px white;
+  box-shadow:0 0 20px white;
+}
+
+input{
+	display: block;
+	margin: 0 auto;
+	height: 30px;
+	width: 300px;
+	
+}
+
+canvas{
+	border-radius: 15px;
+	background-color: #fdf9f3;
+	width: 1000px;
+	height: 500px;
+	background-color: white;
+	display: none;
+	-webkit-box-shadow:0 0 20px white;
+  -moz-box-shadow: 0 0 20px white;
+  box-shadow:0 0 20px white;
+}
