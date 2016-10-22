@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Game development</title>
+  </head>
+
+	<body>
+		<div class="container">
+		  <nav class="navbar navbar-default">
+		  	<div class="container-fluid">
+		    	<div class="navbar-header">
+		      	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+		        	<span class="sr-only"></span>
+		        	<span class="icon-bar"></span>
+		        	<span class="icon-bar"></span>
+		        	<span class="icon-bar"></span>
+		      	</button>
+		      	<a class="pull-left" href="#"><img src="/client/img/crow.png"></a>
+		    		</div>
+		    		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		      		<ul class="nav navbar-nav">
+		        		<li class="active"><a href="/client/index.html">Game Area<span class="sr-only">(current)</span></a></li>
+		        		<li><a href="/client/about.html">About</a></li>
+		      		</ul>
+		    		</div>
+					</div>
+				</nav>
+		</div>
+    <div class="container">
+			<div id="signDiv">
+				Username: <input id="signDiv-username" type="text"></input><br>
+				Password: <input id="signDiv-password" type="password"></input>
+				<button id="signDiv-signIn">Sign In</button>
+				<button id="signDiv-signUp">Sign Up</button>
+			</div>
+			<div id="gameDiv" style="display:none;">
+				<div class="row">
+					<div class="col-sm-8">
+						<canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
+					</div>
+					<div class="col-sm-4">
+						<div id="chat-text" style="width:500px;height:100px;overflow-y:scroll">
+							<div>Hello!</div>
+						</div>
+						<form id="chat-form">
+							<input id="chat-input" type="text" style="width:500px"></input>
+						</form>
+					</div>
+				</div>
+				</div>
+			</div>
+			<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+			<script>
+				var socket = io();
+				var signDiv = document.getElementById('signDiv');
+				var signDivUsername = document.getElementById('signDiv-username');
+				var signDivSignIn = document.getElementById('signDiv-signIn');
+				var signDivSignUp = document.getElementById('signDiv-signUp');
+				var signDivPassword = document.getElementById('signDiv-password');
+
+				signDivSignIn.onclick = function(){
+					socket.emit('signIn',{username:signDivUsername.value,password:signDivPassword.value});
+				}
+				signDivSignUp.onclick = function(){
+					socket.emit('signUp',{username:signDivUsername.value,password:signDivPassword.value});
+				}
+				socket.on('signInResponse',function(data){
+					if(data.success){
+						signDiv.style.display = 'none';
+						gameDiv.style.display = 'inline-block';
+					} else
+						alert("Sign in unsuccessul.");
+				});
+				socket.on('signUpResponse',function(data){
+					if(data.success){
+						alert("Sign up successul.");
+					} else
+						alert("Sign up unsuccessul.");
+				});
+				var chatText = document.getElementById('chat-text');
+				var chatInput = document.getElementById('chat-input');
+				var chatForm = document.getElementById('chat-form');
+				var ctx = document.getElementById("ctx").getContext("2d");
+				ctx.font = '30px Arial';
+
+				socket.on('addToChat',function(data){
+					chatText.innerHTML += '<div>' + data + '</div>';
+				});
+				socket.on('evalAnswer',function(data){
+					console.log(data);
+				});
+				chatForm.onsubmit = function(e){
+					e.preventDefault();
+					if(chatInput.value[0] === '/')
+						socket.emit('evalServer',chatInput.value.slice(1));
+					else
+						socket.emit('sendMsgToServer',chatInput.value);
+					chatInput.value = '';
+				}
+			</script>
+  </body>
+
+</html>
