@@ -54,7 +54,7 @@
       socket.on('board', function(data){
         latest_board = data.board;
         //drawBoard(data.board);
-        creategrid(data.board/*, data.turn*/);
+        creategrid(data.board, data.turn);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
 
@@ -88,7 +88,7 @@
       });
     }
 */
-    function creategrid (req/*, playerno*/){
+    function creategrid (req, playerno){
     var lastClicked;
     var grid = clickableGrid(8,8,function(el,row,col,i){
     console.log("You clicked on element:",el);
@@ -100,8 +100,8 @@
         var co = {contact_name :"Scott",company_name:"HP"};
         var coordinates = { "rows":row,
                           "cols":col,
-                          "state":req/*,
-                        "player": playerno*/ };
+                          "state":req,
+                        "player": playerno };
         $.ajax({
          type: "POST",
          data :JSON.stringify(coordinates),

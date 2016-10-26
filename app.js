@@ -7,12 +7,15 @@ var db = mongojs('mongodb://webcrows:umncsfall16@ds019068.mlab.com:19068/webcrow
 // Start the server
 var express = require('express');
 var app = express();
+var bodyparser = require('body-parser');
+app.use(bodyparser());
+
 app.set('view engine', 'ejs');
 //var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
 //app.engine('handlebars', handlebars.engine);
 //app.set('view engine', 'handlebars');
 var serv = require('http').Server(app);
-app.use(require('body-parser').urlencoded({extended: true}));
+;
 //app.use(express.static(__dirname + '/client'));
 
 
@@ -71,9 +74,9 @@ app.get('/error',function(req, res) {
     //res.render('login');
     res.sendFile(__dirname + '/client/error.html');
 });
-app.get('/grid',function(req, res) {
-    res.sendFile(__dirname + '/client/grid.html');
-});
+//app.get('/game',function(req, res) {
+//    res.sendFile(__dirname + '/client/grid.html');
+//});
 
 app.post('/signupX', function(req, res){
   var username = req.body.username;
@@ -104,15 +107,17 @@ app.post('/loginX', function(req, res){
 
 app.post('/move',function(req,res){
   //console.log("received "+ req.params.rows + req.params.cols);
-  var json = JSON.parse(req);
-  console.log("received "+ json.rows);
-  console.log("received "+ json.cols);
-  newtable = isValidMove(req.params.state, req.params.player,req.params.rows,req.params.cols);
+    console.log(req.body);
+  var row = req.body.rows;
+  var col = req.body.cols;
+  console.log("received "+ row);
+  console.log("received "+ col);
+  newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
   if(newtable==false){
-    //code for handling false move
+    console.log("it is a valid move");
   }
   else{
-    //broadcast newtable
+    console.log("it is invalid");
   }
   //if(socket)
 });

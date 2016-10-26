@@ -9,11 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-  "mongodb": "^2.2.10",
-  "monk": "*",
-  "ejs": "^2.5.2",
-  "express": "^4.14.0",
-  "socket.io": "^1.5.0",
-  "body-parser": "*"
-}
+    "body-parser": "*",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "mongodb": "^2.2.10",
+    "mongojs": "^2.4.0",
+    "monk": "*",
+    "socket.io": "^1.5.0"
+  }
 }
