@@ -113,9 +113,8 @@ app.post('/move',function(req,res){
   console.log("received "+ col);
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
     console.log("New move: ",newtable);
-    
+
   if(newtable==false){
-<<<<<<< HEAD
     console.log("it is a invalid move");
   }
   else{
@@ -124,13 +123,7 @@ app.post('/move',function(req,res){
           GAME.board = newtable;
           GAME.turn = (req.body.player == 1) ? 2 : 1;
           postBoard(GAME);
-      }  
-=======
-    console.log("it is not a valid move");
-  }
-  else{
-    console.log("it is valid");
->>>>>>> 0e5c72b2071188d8ef9537dce37670838443d105
+      }
   }
 });
 
