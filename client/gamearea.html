@@ -54,7 +54,7 @@
       socket.on('board', function(data){
         latest_board = data.board;
         //drawBoard(data.board);
-        creategrid(data.board, data.turn);
+        creategrid(data.board, player);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
 

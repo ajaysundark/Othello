@@ -114,10 +114,10 @@ app.post('/move',function(req,res){
   console.log("received "+ col);
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
   if(newtable==false){
-    console.log("it is a valid move");
+    console.log("it is not a valid move");
   }
   else{
-    console.log("it is invalid");
+    console.log("it is valid");
   }
   //if(socket)
 });
@@ -138,7 +138,7 @@ io.sockets.on('connection', function(socket){
     game.players.push(socket);
 
     socket.emit('accept', {player: player, board: game.board});
-
+/*
     socket.on('hand', function(hand){
       var x = parseInt(hand[0]), y = parseInt(hand[1]);
       var conds = {
@@ -153,7 +153,7 @@ io.sockets.on('connection', function(socket){
 	if( game.turn === 0 )
 	  gameEnd(game, othello.winner(game.board));
       }
-    });
+    });*/
 
     socket.on('disconnect', function(){
       if(GAME.players[0] === socket)
