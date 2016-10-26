@@ -115,6 +115,7 @@ app.post('/move',function(req,res){
     console.log("New move: ",newtable);
     
   if(newtable==false){
+<<<<<<< HEAD
     console.log("it is a invalid move");
   }
   else{
@@ -124,6 +125,12 @@ app.post('/move',function(req,res){
           GAME.turn = (req.body.player == 1) ? 2 : 1;
           postBoard(GAME);
       }  
+=======
+    console.log("it is not a valid move");
+  }
+  else{
+    console.log("it is valid");
+>>>>>>> 0e5c72b2071188d8ef9537dce37670838443d105
   }
 });
 
@@ -143,7 +150,7 @@ io.sockets.on('connection', function(socket){
     game.players.push(socket);
 
     socket.emit('accept', {player: player, board: game.board});
-
+/*
     socket.on('hand', function(hand){
       var x = parseInt(hand[0]), y = parseInt(hand[1]);
       var conds = {
@@ -158,7 +165,7 @@ io.sockets.on('connection', function(socket){
 	if( game.turn === 0 )
 	  gameEnd(game, othello.winner(game.board));
       }
-    });
+    });*/
 
     socket.on('disconnect', function(){
       if(GAME.players[0] === socket)

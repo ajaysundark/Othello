@@ -53,8 +53,8 @@
       //clickbind(data.board, player);
       socket.on('board', function(data){
         latest_board = data.board;
-        // clear
-        creategrid(data.board, data.turn);
+        //drawBoard(data.board);
+        creategrid(data.board, player);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
 
