@@ -1,0 +1,12 @@
+.grid { margin:1em auto; border-collapse:collapse;border-radius:15px;}
+.grid td {
+    cursor:pointer;
+    width:66px; height:66px;
+    border:1px solid #ccc;
+
+    text-align:center;
+    font-family:sans-serif; font-size:13px
+}
+.grid td.clicked {
+    background-color:sienna;
+}

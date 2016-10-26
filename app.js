@@ -1,12 +1,20 @@
 // MongoDB connection parameters
+var ejs = require('ejs');
 var mongojs = require("mongojs");
 var db = mongojs('mongodb://webcrows:umncsfall16@ds019068.mlab.com:19068/webcrowsdb', ['account','progress']);
+//var othello = require('./client/js/othello.js');
 
 // Start the server
 var express = require('express');
 var app = express();
+app.set('view engine', 'ejs');
+//var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
+//app.engine('handlebars', handlebars.engine);
+//app.set('view engine', 'handlebars');
 var serv = require('http').Server(app);
 app.use(require('body-parser').urlencoded({extended: true}));
+//app.use(express.static(__dirname + '/client'));
+
 
 function createUser(username, password, password_confirmation, callback){
     if (password !== password_confirmation) {
@@ -40,18 +48,33 @@ function authenticateUser(username, password, callback){
 
 // This is the client home page
 app.get('/',function(req, res) {
-    //res.sendFile(__dirname + '/client/index.html');
+    //res.render('login');
     res.sendFile(__dirname + '/client/login.html');
 });
 app.get('/about',function(req, res) {
+    //res.render('about');
     res.sendFile(__dirname + '/client/about.html');
 });
 app.get('/signup',function(req, res) {
+    //res.render('signup');
     res.sendFile(__dirname + '/client/signup.html');
 });
 app.get('/gamearea',function(req, res) {
+    //res.render('gamearea');
     res.sendFile(__dirname + '/client/gamearea.html');
 });
+app.get('/login',function(req, res) {
+    //res.render('login');
+    res.sendFile(__dirname + '/client/login.html');
+});
+app.get('/error',function(req, res) {
+    //res.render('login');
+    res.sendFile(__dirname + '/client/error.html');
+});
+app.get('/grid',function(req, res) {
+    res.sendFile(__dirname + '/client/grid.html');
+});
+
 app.post('/signupX', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
@@ -60,7 +83,6 @@ app.post('/signupX', function(req, res){
   createUser(username, password, password_confirmation, function(err, user){
     if (err) {
       res.sendFile(__dirname + '/client/error.html');
-      //res.render('signup', {error: err});
     } else {
       res.redirect('/');
     }
@@ -72,7 +94,6 @@ app.post('/loginX', function(req, res){
 
   authenticateUser(username, password, function(err, user){
     if (user) {
-      //req.session.username = user.username;
       res.redirect('/gamearea');
     }
     else {
@@ -80,45 +101,81 @@ app.post('/loginX', function(req, res){
     }
   });
 });
+
+app.post('/move',function(req,res){
+  //console.log("received "+ req.params.rows + req.params.cols);
+  var json = JSON.parse(req);
+  console.log("received "+ json.rows);
+  console.log("received "+ json.cols);
+  newtable = isValidMove(req.params.state, req.params.player,req.params.rows,req.params.cols);
+  if(newtable==false){
+    //code for handling false move
+  }
+  else{
+    //broadcast newtable
+  }
+  //if(socket)
+});
+
 app.use('/client',express.static(__dirname + '/client'));
 
-// Port number - to be configured using nconf later
+
 serv.listen(2000);
 
 var io = require('socket.io')(serv,{});
-
-////////////////
 
 var GAME;
 initGame();
 
 io.sockets.on('connection', function(socket){
-
   socket.on('enter room', function(){
     var game = GAME, player = game.players.length + 1;
     game.players.push(socket);
 
-
     socket.emit('accept', {player: player, board: game.board});
+
+    socket.on('hand', function(hand){
+      var x = parseInt(hand[0]), y = parseInt(hand[1]);
+      var conds = {
+	turn        : game.turn === player,
+	emptySquare : othello.getOccupant(game.board, x, y) === 0,
+	reversible  : othello.handReverseNum(game.board, game.turn, x, y) > 0
+      }
+      if( conds.turn && conds.emptySquare && conds.reversible){
+	game.board = othello.hand(game.board, game.turn, x, y);
+	game.turn  = othello.nextPlayer(game.board, game.turn);
+	postBoard(game);
+	if( game.turn === 0 )
+	  gameEnd(game, othello.winner(game.board));
+      }
+    });
 
     socket.on('disconnect', function(){
       if(GAME.players[0] === socket)
-	     initGame();
+	initGame();
       else
-	     gameEnd(game, anotherPlayer(player));
+	gameEnd(game, othello.anotherPlayer(player));
     });
 
     if(game.players.length === 2){
       game.turn = 1;
-      console.log("This is one instance of a game");
-      initGame();
+      //initGame();
+      postBoard(game);
     }
   });
 });
 
+
+function handler (req, res) {
+  var path = url.parse(req.url).pathname;
+  page.urlhandler(path, res);
+}
+
 function initGame(){
   GAME = {
     players: [],
+    // add the code to inital array
+    board:   [[3,3,3,3,3,3,3,3],[ 3,3,3,0,0,0,1,1], [1,1,3,3,0,0,1,0] ,[3,3,3,3,3,3,3,3], [0,0,1,1,3,3,3,0],[ 3,3,3,1,0,0,1,1],[ 0,0,1,1,3,3,3,3], [1,1,1,3,3,3,0,1] ],
     turn:    0
   }
 }
@@ -132,6 +189,79 @@ function gameEnd(game, winner){
   });
 }
 
-function anotherPlayer(player){
-  return player % 2 + 1;
+function postBoard(game){
+  game.players.map(function(player){
+    player.emit('board', {board: game.board, turn: game.turn});
+  });
+}
+
+function isValidMove(board, tile, xstart, ystart){
+  if (board[xstart][ystart]!=''||(!isOnBoard(xstart,ystart))){
+    return false;
+  }
+
+  board[xstart][ystart] = tile;
+
+  if(tile == 'X'){
+    otherTile = 'O';
+  }
+  else{
+    otherTile = 'X';
+  }
+
+  tilesToFlip = [];
+
+  var dirs = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
+
+  for(i=0;i<dirs.length;i++){
+    xdir=dirs[i][0];
+    ydir=dirs[i][1];
+    x=xstart;
+    y=ystart;
+    x=x+xdir;
+    y=y+ydir;
+    if(isOnBoard(x,y)&&board[x][y]==otherTile){
+      x=x+xdir;
+      y=y+ydir;
+      if(!isOnBoard(x,y)){
+        continue;
+      }
+      while(board[x][y]==otherTile){
+        x=x+xdir;
+        y=y+ydir;
+        if(!isOnBoard(x,y)){
+          break;
+        }
+      }
+      if(!isOnBoard(x,y)){
+        continue;
+      }
+      if(board[x][y]==tile){
+        while(true){
+          x=x-xdir;
+          y=y-ydir;
+          if((x==xstart)&&(y==ystart)){
+            break;
+          }
+          tilesToFlip.push([x,y]);
+        }
+      }
+    }
+  }
+
+board[xstart][ystart]='';
+if(tilesToFlip.length==0){
+  return false;
+}
+
+for(i=0;i<tilesToFlip.length;i++){
+  xch=tilesToFlip[i][0];
+  ych=tilesToFlip[i][1];
+  board[xch][ych]=tile;
+}
+return board;
+}
+
+function isOnBoard(x,y){
+  return((x>=0)&&(x<=7)&&(y>=0)&&(y<=7))
 }

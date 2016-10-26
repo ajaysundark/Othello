@@ -1,94 +1,162 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
   <head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>Game development</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <title>Webcrows Game</title>
+    <link rel="stylesheet" type="text/css" href="/client/grid.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   </head>
 
-	<body>
-		<div class="container">
-		  <nav class="navbar navbar-default">
-		  	<div class="container-fluid">
-		    	<div class="navbar-header">
-		      	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-		        	<span class="sr-only"></span>
-		        	<span class="icon-bar"></span>
-		        	<span class="icon-bar"></span>
-		        	<span class="icon-bar"></span>
-		      	</button>
-		      	<a class="pull-left" href="#"><img src="/client/img/crow.png"></a>
-		    		</div>
-		    		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		      		<ul class="nav navbar-nav">
-		        		<li class="active"><a href="/client/login.html">Game Area<span class="sr-only">(current)</span></a></li>
-		        		<li><a href="/client/about.html">About</a></li>
-		      		</ul>
-		    		</div>
-					</div>
-				</nav>
-		</div>
+  <body>
+
     <div class="container">
-			<div id="gameDiv">
-				<div class="row">
-					<div class="col-sm-8">
-						<canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
-					</div>
-					<div class="col-sm-4">
-						<div id="chat-text" style="width:500px;height:100px;overflow-y:scroll">
-							<div>Hello!</div>
-						</div>
-						<form id="chat-form">
-							<input id="chat-input" type="text" style="width:500px"></input>
-						</form>
-					</div>
-				</div>
-				</div>
-			</div>
-			<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-			<script>
-				var socket = io();
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="pull-left" href="#"><img src="/client/img/crow.png"></a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="/client/login.html">Game Area<span class="sr-only">(current)</span></a></li>
+                <li><a href="/client/about.html">About</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+    </div>
+    <div class="container">
+      <header>
+        <h2>Hello Puny Humans !</h2>
+      </header>
+      <div>
+      </div>
+    </div>
+    <script>
+    var latest_board;
+    var socket = io();
 
-				var chatText = document.getElementById('chat-text');
-				var chatInput = document.getElementById('chat-input');
-				var chatForm = document.getElementById('chat-form');
-				var ctx = document.getElementById("ctx").getContext("2d");
-				ctx.font = '30px Arial';
+    socket.emit('enter room');
+    socket.on('accept', function(data){
+      var player = data.player;
+      var board = data.board;
+      //clickbind(data.board, player);
+      socket.on('board', function(data){
+        latest_board = data.board;
+        //drawBoard(data.board);
+        creategrid(data.board/*, data.turn*/);
+        display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
+      });
 
-				socket.on('addToChat',function(data){
-					chatText.innerHTML += '<div>' + data + '</div>';
-				});
-				socket.on('evalAnswer',function(data){
-					console.log(data);
-				});
-				chatForm.onsubmit = function(e){
-					e.preventDefault();
-					if(chatInput.value[0] === '/')
-						socket.emit('evalServer',chatInput.value.slice(1));
-					else
-						socket.emit('sendMsgToServer',chatInput.value);
-					chatInput.value = '';
-				}
-        ///////
-        var latest_board;
-        socket.emit('enter room');
-        socket.on('accept', function(data){
-          var player = data.player;
+      socket.on('game end', function(data){
+        if(data.winner === 0)
+          display('GAME SET (DRAW)');
+        else
+          display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
+    	      ' WINNER: ' + toColor(data.winner) + ')');
+      });
+    });
 
-          socket.on('game end', function(data){
-            if(data.winner === 0)
-              display('GAME SET (DRAW)');
-            else
-              display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
-        	      ' WINNER: ' + toColor(data.winner) + ')');
-            foot('<a href="./">BACK</a>');
-          });
-        });
-			</script>
+/*
+    function sendHand(x, y){
+      // add send code
+    }
+*/
+    function display(message){
+      $('#message').html(message);
+    }
+
+/*
+    function drawBoard(board){
+      // add own logic
+    }
+
+
+    function clickbind(board, player){
+        //$square.click(function(){ sendHand(x, y); });
+        //$stone.click(function(){ sendHand(x, y); });
+      });
+    }
+*/
+    function creategrid (req/*, playerno*/){
+    var lastClicked;
+    var grid = clickableGrid(8,8,function(el,row,col,i){
+    console.log("You clicked on element:",el);
+    console.log("You clicked on row:",row);
+    console.log("You clicked on col:",col);
+    console.log("You clicked on item #:",i);
+      el.className='clicked';
+      if (lastClicked) {
+        var co = {contact_name :"Scott",company_name:"HP"};
+        var coordinates = { "rows":row,
+                          "cols":col,
+                          "state":req/*,
+                        "player": playerno*/ };
+        $.ajax({
+         type: "POST",
+         data :JSON.stringify(coordinates),
+         url: "/move",
+         contentType: "application/json",
+         success: printsuccess()
+       });
+        lastClicked.className='';
+      }
+      lastClicked = el;
+  });
+
+  function printsuccess(){
+    console.log("success");
+  }
+  document.body.appendChild(grid);
+  function clickableGrid( rows, cols, callback ){
+      var i=0;
+      var grid = document.createElement('table');
+      grid.style.borderSpacing = "15px";
+      grid.style.backgroundImage="url('/client/img/map.jpg')"
+      grid.className = 'grid';
+      for (var r=0;r<rows;++r){
+          var tr = grid.appendChild(document.createElement('tr'));
+          for (var c=0;c<cols;++c){
+              var cell = tr.appendChild(document.createElement('td'));
+              i++;
+                console.log(req[r][c]);
+               if(req[r][c]==0)
+              cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
+            else   if(req[r][c]==1)
+              cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
+
+                   else cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
+              cell.addEventListener('click',(function(el,r,c,i){
+                  return function(){
+                      callback(el,r,c,i);
+                  }
+              })(cell,r,c,i),false);
+          }
+      }
+      return grid;
+    }
+     }
+
+     function toColor(player){
+      if(player === 1)
+        return 'white';
+      else if(player == 2)
+        return 'black';
+      else
+        return 'green';
+    }
+
+
+    </script>
   </body>
-
 </html>
