@@ -6,13 +6,72 @@ var db = mongojs('mongodb://webcrows:umncsfall16@ds019068.mlab.com:19068/webcrow
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
+app.use(require('body-parser').urlencoded({extended: true}));
 
-// This is the client hoem page
+function createUser(username, password, password_confirmation, callback){
+    if (password !== password_confirmation) {
+    var err = 'The passwords do not match';
+    callback(err);
+  } else {
+      db.account.find({username: username}, function(err, user){
+      if (!(user.length==0)) {
+        err = 'The username you entered already exists';
+        callback(err);
+      } else {
+            db.account.insert({username: username, password: password},function(err,user){
+            callback(err,user);
+        });
+      }
+    });
+  }
+}
+
+function authenticateUser(username, password, callback){
+  db.account.find({username: username, password: password}, function(err, user){
+    callback(err, user);
+  });
+}
+
+// This is the client home page
 app.get('/',function(req, res) {
-    res.sendFile(__dirname + '/client/index.html');
+    //res.sendFile(__dirname + '/client/index.html');
+    res.sendFile(__dirname + '/client/login.html');
 });
 app.get('/about',function(req, res) {
     res.sendFile(__dirname + '/client/about.html');
+});
+app.get('/signup',function(req, res) {
+    res.sendFile(__dirname + '/client/signup.html');
+});
+app.get('/gamearea',function(req, res) {
+    res.sendFile(__dirname + '/client/gamearea.html');
+});
+app.post('/signupX', function(req, res){
+  var username = req.body.username;
+  var password = req.body.password;
+  var password_confirmation = req.body.password_confirmation;
+
+  createUser(username, password, password_confirmation, function(err, user){
+    if (err) {
+      res.sendFile(__dirname + '/client/error.html');
+      //res.render('signup', {error: err});
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+app.post('/loginX', function(req, res){
+  var username = req.body.username;
+  var password = req.body.password;
+
+  authenticateUser(username, password, function(err, user){
+    if (user) {
+      res.redirect('/gamearea');
+    }
+    else {
+      res.sendFile(__dirname + '/client/error.html');
+    }
+  });
 });
 app.use('/client',express.static(__dirname + '/client'));
 
@@ -41,7 +100,6 @@ var DEBUG = true;
 
 var isValidPassword = function(data,cb){
     db.account.find({username:data.username,password:data.password},function(err,res){
-        console.log(res.length);
         if(res.length > 0)
             cb(true);
         else
