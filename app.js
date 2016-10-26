@@ -201,17 +201,17 @@ function postBoard(game){
 }
 
 function isValidMove(board, tile, xstart, ystart){
-  if (board[xstart][ystart]!=''||(!isOnBoard(xstart,ystart))){
+  if (board[xstart][ystart]!=0||(!isOnBoard(xstart,ystart))){
     return false;
   }
 
   board[xstart][ystart] = tile;
 
-  if(tile == 'X'){
-    otherTile = 'O';
+  if(tile == 1){
+    otherTile = 2;
   }
   else{
-    otherTile = 'X';
+    otherTile = 1;
   }
 
   tilesToFlip = [];
@@ -254,7 +254,7 @@ function isValidMove(board, tile, xstart, ystart){
     }
   }
 
-board[xstart][ystart]='';
+board[xstart][ystart]=0;
 if(tilesToFlip.length==0){
   return false;
 }
