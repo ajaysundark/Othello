@@ -73,6 +73,21 @@
 						socket.emit('sendMsgToServer',chatInput.value);
 					chatInput.value = '';
 				}
+        ///////
+        var latest_board;
+        socket.emit('enter room');
+        socket.on('accept', function(data){
+          var player = data.player;
+
+          socket.on('game end', function(data){
+            if(data.winner === 0)
+              display('GAME SET (DRAW)');
+            else
+              display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
+        	      ' WINNER: ' + toColor(data.winner) + ')');
+            foot('<a href="./">BACK</a>');
+          });
+        });
 			</script>
   </body>
 

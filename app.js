@@ -27,8 +27,14 @@ function createUser(username, password, password_confirmation, callback){
 }
 
 function authenticateUser(username, password, callback){
+
   db.account.find({username: username, password: password}, function(err, user){
-    callback(err, user);
+    if ((user.length==0)||(user.password==0)) {
+      err = 'Credentials do not match';
+      callback(err);
+    } else {
+        callback(err, user);
+    }
   });
 }
 
@@ -66,6 +72,7 @@ app.post('/loginX', function(req, res){
 
   authenticateUser(username, password, function(err, user){
     if (user) {
+      //req.session.username = user.username;
       res.redirect('/gamearea');
     }
     else {
@@ -77,88 +84,54 @@ app.use('/client',express.static(__dirname + '/client'));
 
 // Port number - to be configured using nconf later
 serv.listen(2000);
-console.log("Server started.");
-
-var SOCKET_LIST = {};
-
-var Player = function(id){
-  var self = {
-      id:"",
-  }
-    Player.list[id] = self;
-    return self;
-}
-Player.list = {};
-Player.onConnect = function(socket){
-    var player = Player(socket.id);
-}
-Player.onDisconnect = function(socket){
-    delete Player.list[socket.id];
-}
-
-var DEBUG = true;
-
-var isValidPassword = function(data,cb){
-    db.account.find({username:data.username,password:data.password},function(err,res){
-        if(res.length > 0)
-            cb(true);
-        else
-            cb(false);
-    });
-}
-var isUsernameTaken = function(data,cb){
-    db.account.find({username:data.username},function(err,res){
-        if(res.length > 0)
-            cb(true);
-        else
-            cb(false);
-    });
-}
-var addUser = function(data,cb){
-    db.account.insert({username:data.username,password:data.password},function(err){
-        cb();
-    });
-}
 
 var io = require('socket.io')(serv,{});
+
+////////////////
+
+var GAME;
+initGame();
+
 io.sockets.on('connection', function(socket){
-    socket.id = Math.random();
-    SOCKET_LIST[socket.id] = socket;
-    socket.on('signIn',function(data){
-        isValidPassword(data,function(res){
-            if(res){
-                Player.onConnect(socket);
-                socket.emit('signInResponse',{success:true});
-            } else {
-                socket.emit('signInResponse',{success:false});
-            }
-        });
+
+  socket.on('enter room', function(){
+    var game = GAME, player = game.players.length + 1;
+    game.players.push(socket);
+
+
+    socket.emit('accept', {player: player, board: game.board});
+
+    socket.on('disconnect', function(){
+      if(GAME.players[0] === socket)
+	     initGame();
+      else
+	     gameEnd(game, anotherPlayer(player));
     });
-    socket.on('signUp',function(data){
-        isUsernameTaken(data,function(res){
-            if(res){
-                socket.emit('signUpResponse',{success:false});
-            } else {
-                addUser(data,function(){
-                    socket.emit('signUpResponse',{success:true});
-                });
-            }
-        });
-    });
-    socket.on('disconnect',function(){
-        delete SOCKET_LIST[socket.id];
-        Player.onDisconnect(socket);
-    });
-    socket.on('sendMsgToServer',function(data){
-        var playerName = ("" + socket.id).slice(2,7);
-        for(var i in SOCKET_LIST){
-            SOCKET_LIST[i].emit('addToChat',playerName + ': ' + data);
-        }
-    });
-    socket.on('evalServer',function(data){
-        if(!DEBUG)
-            return;
-        var res = eval(data);
-        socket.emit('evalAnswer',res);
-    });
+
+    if(game.players.length === 2){
+      game.turn = 1;
+      console.log("This is one instance of a game");
+      initGame();
+    }
+  });
 });
+
+function initGame(){
+  GAME = {
+    players: [],
+    turn:    0
+  }
+}
+
+function gameEnd(game, winner){
+  game.players.map(function(player){
+    player.emit('game end', {
+      winner: winner,
+      points: [othello.count(game.board, 1), othello.count(game.board, 2)]
+    });
+  });
+}
+
+function anotherPlayer(player){
+  return player % 2 + 1;
+}
