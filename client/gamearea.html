@@ -96,19 +96,21 @@
     console.log("You clicked on col:",col);
     console.log("You clicked on item #:",i);
       el.className='clicked';
+      var coordinates = { "rows":row,
+                        "cols":col,
+                        "state":req,
+                      "player": playerno };
+      $.ajax({
+       type: "POST",
+       data :JSON.stringify(coordinates),
+       url: "/move",
+       contentType: "application/json",
+       success: printsuccess()
+      });
+
       if (lastClicked) {
         var co = {contact_name :"Scott",company_name:"HP"};
-        var coordinates = { "rows":row,
-                          "cols":col,
-                          "state":req,
-                        "player": playerno };
-        $.ajax({
-         type: "POST",
-         data :JSON.stringify(coordinates),
-         url: "/move",
-         contentType: "application/json",
-         success: printsuccess()
-       });
+
         lastClicked.className='';
       }
       lastClicked = el;
