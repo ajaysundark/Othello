@@ -53,7 +53,7 @@
       //clickbind(data.board, player);
       socket.on('board', function(data){
         latest_board = data.board;
-        //drawBoard(data.board);
+        // clear
         creategrid(data.board, data.turn);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
@@ -89,6 +89,13 @@
     }
 */
     function creategrid (req, playerno){
+        console.log("Received Board : ",req);
+        console.log("Received playerno : ", playerno);
+    /*var oldgrid = document.getElementsByTagName('table');
+    if(oldgrid) {
+            oldgrid.remove();
+    } */
+        
     var lastClicked;
     var grid = clickableGrid(8,8,function(el,row,col,i){
     console.log("You clicked on element:",el);
@@ -122,6 +129,7 @@
   function clickableGrid( rows, cols, callback ){
       var i=0;
       var grid = document.createElement('table');
+//      grid.setAttribute("id", "gameboard");
       grid.style.borderSpacing = "15px";
       grid.style.backgroundImage="url('/client/img/map.jpg')"
       grid.className = 'grid';

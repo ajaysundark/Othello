@@ -107,19 +107,24 @@ app.post('/loginX', function(req, res){
 
 app.post('/move',function(req,res){
   //console.log("received "+ req.params.rows + req.params.cols);
-    console.log(req.body);
   var row = req.body.rows;
   var col = req.body.cols;
   console.log("received "+ row);
   console.log("received "+ col);
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
+    console.log("New move: ",newtable);
+    
   if(newtable==false){
-    console.log("it is a valid move");
+    console.log("it is a invalid move");
   }
   else{
-    console.log("it is invalid");
+      console.log("it is a valid move");
+      if(GAME) {
+          GAME.board = newtable;
+          GAME.turn = (req.body.player == 1) ? 2 : 1;
+          postBoard(GAME);
+      }  
   }
-  //if(socket)
 });
 
 app.use('/client',express.static(__dirname + '/client'));
