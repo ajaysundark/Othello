@@ -78,13 +78,72 @@ app.post('/move',function(req,res){
   }
   else{
       console.log("it is a valid move");
+      emptyflag=0;
+      for(i=0;i<7;i++){
+        for(j=0;j<7;j++){
+          if(newtable[i][j]==0){
+            emptyflag=1;
+            break;
+          }
+        }
+        if(emptyflag==1){
+          break;
+        }
+      }
+      if(emptyflag==0){
+        count1 = 0;
+        count2 = 0;
+        for(i=0;i<7;i++){
+          for(j=0;j<7;j++){
+            if(newtable[i][j]==1){
+              count1++;
+            }
+            else{
+              count2++;
+            }
+          }
+        }
+        if(count1>count2){
+          winner = 1;
+        }
+        else{
+          winner=2;
+        }
+        timestamp = Date.now();
+        //
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
 
-      if(GAME) {
+        if(dd<10) {
+           dd='0'+dd
+        }
+
+        if(mm<10) {
+           mm='0'+mm
+        }
+
+        today = mm+'/'+dd+'/'+yyyy;
+        console.log(today);
+        //
+        gameEnd(GAME,winner,count1,count2,today);
+      }
+      else {
           GAME.board = newtable;
           GAME.turn = (req.body.player == 1) ? 2 : 1;
-          postBoard(GAME, 1);
+          console.log(GAME.board);
+          postBoard(GAME);
       }
   }
+});
+
+app.get('/statistics', function(req, res){
+  db.progress.find({}).toArray(function(err, stats_array) {
+    console.log(stats_array);
+    return res.json(stats_array);
+  });
+
 });
 
 app.use('/client',express.static(__dirname + '/client'));
@@ -131,11 +190,19 @@ function initGame(){
   }
 }
 
-function gameEnd(game, winner){
+function gameEnd(game, winner,count1,count2,today){
+  var winnerToInsert = winner;
+  var count1ToInsert = count1;
+  var count2ToInsert = count2;
+  var tsToInsert = today;
+  db.progress.insert({winner: winnerToInsert, count1: count1ToInsert, count2: count2ToInsert, timeStamp: tsToInsert});
+  //
   game.players.map(function(player){
     player.emit('game end', {
       winner: winner,
-      points: [othello.count(game.board, 1), othello.count(game.board, 2)]
+      count1: count1,
+      count2: count2,
+      timestamp: timestamp
     });
   });
 }
