@@ -1,4 +1,4 @@
-.grid { margin:1em auto; border-collapse:collapse;border-radius:15px;}
+.grid { margin:1em auto; border-collapse:collapse;border-radius:25px;}
 .grid td {
     cursor:pointer;
     width:66px; height:66px;
