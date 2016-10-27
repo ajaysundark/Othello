@@ -10,3 +10,37 @@
 .grid td.clicked {
     background-color:sienna;
 }
+
+html, body{
+  background-color: black;
+}
+
+h1{
+    color: #00FF00;
+    font-size: 50px;
+    text-align: center;
+}
+
+.navbar{
+margin-top: 20px;
+box-shadow: 0px 0px 40px #00FF00;
+border-radius: 15px;
+padding: 10px;
+}
+
+.pull-left{
+  padding-top: 10px;
+  padding-right: 20px;
+}
+
+#message{
+  color: white;
+}
+
+h2{
+  color: #00FF00;
+}
+
+#gamediv{
+    box-shadow: 0px 0px 40px #00FF00;
+}
