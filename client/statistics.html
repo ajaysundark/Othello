@@ -28,6 +28,8 @@
               <ul class="nav navbar-nav">
                 <li class="active"><a href="/client/login.html">Game Area<span class="sr-only">(current)</span></a></li>
                 <li><a href="/client/about.html">About</a></li>
+                <li><a href="/client/spectator.html">Spectate</a></li>
+                <li><a href="/client/statistics.html">Statistics</a></li>
               </ul>
             </div>
           </div>
@@ -35,107 +37,10 @@
     </div>
     <div class="container">
       <header>
-        <h2>Hello Puny Humans !</h2>
+        <h2>Statistics of the game played till now:</h2>
       </header>
       <div>
       </div>
     </div>
-    <script>
-    var latest_board;
-    var socket = io();
-
-    socket.emit('enter room');
-    socket.on('accept', function(data){
-      var player = data.player;
-      var board = data.board;
-      //clickbind(data.board, player);
-      socket.on('board', function(data){
-        latest_board = data.board;
-        //drawBoard(data.board);
-        creategrid(data.board, player);
-        display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
-      });
-
-      socket.on('game end', function(data){
-        if(data.winner === 0)
-          display('GAME SET (DRAW)');
-        else
-          display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
-    	      ' WINNER: ' + toColor(data.winner) + ')');
-      });
-    });
-
-    function display(message){
-      $('#message').html(message);
-    }
-
-    function creategrid (req, playerno){
-      var lastClicked;
-      var grid = clickableGrid(8,8,function(el,row,col,i){
-      el.className='clicked';
-      var coordinates = { "rows":row,
-                        "cols":col,
-                        "state":req,
-                      "player": playerno};
-      $.ajax({
-       type: "POST",
-       data :JSON.stringify(coordinates),
-       url: "/move",
-       contentType: "application/json",
-       success: printsuccess()
-      });
-
-      if (lastClicked) {
-        lastClicked.className='';
-      }
-      lastClicked = el;
-  });
-
-  function printsuccess(){
-    console.log("success");
-  }
-  document.body.appendChild(grid);
-  function clickableGrid( rows, cols, callback ){
-      var i=0;
-      var grid = document.createElement('table');
-      grid.style.borderSpacing = "15px";
-      grid.style.backgroundImage="url('/client/img/map.jpg')"
-      grid.className = 'grid';
-      for (var r=0;r<rows;++r){
-          var tr = grid.appendChild(document.createElement('tr'));
-          for (var c=0;c<cols;++c){
-              var cell = tr.appendChild(document.createElement('td'));
-              i++;
-                console.log(req[r][c]);
-               if(req[r][c]==0)
-                cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
-              else
-                if(req[r][c]==1)
-                  cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
-                else
-                  cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
-              cell.addEventListener('click',(function(el,r,c,i){
-              return function(){
-                callback(el,r,c,i);
-              }
-              })(cell,r,c,i),false);
-          }
-      }
-      return grid;
-    }
-}
-
-     function toColor(player){
-      if(player === 1)
-        return 'black';
-      else if(player == 2)
-        return 'orange';
-      else
-        return 'green';
-    }
-
-
-    </script>
-    <p id="message"></p>
   </body>
 </html>
