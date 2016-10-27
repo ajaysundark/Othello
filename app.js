@@ -150,8 +150,8 @@ app.get('/statistics', function(req, res){
 
 app.use('/client',express.static(__dirname + '/client'));
 
-
-serv.listen(2000);
+var portX = process.env.PORT || 2000;
+serv.listen(portX);
 
 var io = require('socket.io')(serv,{});
 
