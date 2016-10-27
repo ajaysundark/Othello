@@ -9,7 +9,9 @@ __Team members:__
 - rich1044@umn.edu
 - karup002@umn.edu
 
-__Heroku URL:__ _url_
+__Heroku URL:__
+
+https://webcrowsothello.herokuapp.com/
 
 __Argument of ambition:__
 
@@ -17,8 +19,8 @@ __Argument of ambition:__
 Being a two player game, Othello is played in alternate turns where one player must make a valid move to affect the state of the game. Following points make the project technically ambitious:
 
 - Algorithm to implement Othello rule engine is complex.
-- Two players have to be given an exclusive board on which they play. 
-- Each play involves validating multiple rules e.g. if the right player is making the move, if the move is valid. 
+- Two players have to be given an exclusive board on which they play.
+- Each play involves validating multiple rules e.g. if the right player is making the move, if the move is valid.
 - The state of board is not changed unless all the rules pass validation.
 - Maintaining live scores and then towards the end of the game declaring the winner based on who has the highest number of coins on the board.
 

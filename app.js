@@ -138,6 +138,7 @@ app.post('/move',function(req,res){
           postBoard(GAME);
       }
   }
+  return res.json(1);
 });
 
 app.get('/statistics', function(req, res){
