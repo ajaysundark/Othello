@@ -119,9 +119,12 @@ app.post('/move',function(req,res){
   }
   else{
       console.log("it is a valid move");
+
       if(GAME) {
           GAME.board = newtable;
           GAME.turn = (req.body.player == 1) ? 2 : 1;
+          console.log("Turn: "+GAME.turn);
+          console.log(GAME);
           postBoard(GAME);
       }
   }
@@ -269,6 +272,7 @@ for(i=0;i<tilesToFlip.length;i++){
   ych=tilesToFlip[i][1];
   board[xch][ych]=tile;
 }
+board[xstart][ystart]=tile;
 return board;
 }
 

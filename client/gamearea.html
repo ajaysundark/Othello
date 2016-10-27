@@ -95,7 +95,7 @@
     if(oldgrid) {
             oldgrid.remove();
     } */
-        
+
     var lastClicked;
     var grid = clickableGrid(8,8,function(el,row,col,i){
     console.log("You clicked on element:",el);
@@ -106,7 +106,7 @@
       var coordinates = { "rows":row,
                         "cols":col,
                         "state":req,
-                      "player": playerno };
+                      "player": playerno};
       $.ajax({
        type: "POST",
        data :JSON.stringify(coordinates),
@@ -158,14 +158,15 @@
 
      function toColor(player){
       if(player === 1)
-        return 'white';
-      else if(player == 2)
         return 'black';
+      else if(player == 2)
+        return 'orange';
       else
         return 'green';
     }
 
 
     </script>
+    <p id="message"></p>
   </body>
 </html>
