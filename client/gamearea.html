@@ -50,11 +50,13 @@
     socket.on('accept', function(data){
       var player = data.player;
       var board = data.board;
+    //  var flag = data.flag;
       //clickbind(data.board, player);
       socket.on('board', function(data){
         latest_board = data.board;
+      var  flag= data.flag;
         //drawBoard(data.board);
-        creategrid(data.board, player);
+        creategrid(data.board, player,flag);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
 
@@ -66,6 +68,15 @@
     	      ' WINNER: ' + toColor(data.winner) + ')');
       });
     });
+
+    function toColor(player){
+     if(player === 1)
+       return 'black';
+     else if(player == 2)
+       return 'orange';
+     else
+       return 'green';
+   }
 
 /*
     function sendHand(x, y){
@@ -88,9 +99,10 @@
       });
     }
 */
-    function creategrid (req, playerno){
+    function creategrid (req, playerno,flag){
         console.log("Received Board : ",req);
         console.log("Received playerno : ", playerno);
+
     /*var oldgrid = document.getElementsByTagName('table');
     if(oldgrid) {
             oldgrid.remove();
@@ -102,6 +114,7 @@
     console.log("You clicked on row:",row);
     console.log("You clicked on col:",col);
     console.log("You clicked on item #:",i);
+    //  console.log("flag : ",flag);
       el.className='clicked';
       var coordinates = { "rows":row,
                         "cols":col,
@@ -118,6 +131,8 @@
       if (lastClicked) {
 
         lastClicked.className='';
+
+
       }
       lastClicked = el;
   });
@@ -125,9 +140,17 @@
   function printsuccess(){
     console.log("success");
   }
-  document.body.appendChild(grid);
+
   function clickableGrid( rows, cols, callback ){
       var i=0;
+
+    //  if(flag==0 )
+      {
+          var e = document.getElementsByTagName('table')[0];
+        //  e.removeChild('body');
+  if(e){
+    document.body.innerHTML = '';
+  }
       var grid = document.createElement('table');
 //      grid.setAttribute("id", "gameboard");
       grid.style.borderSpacing = "15px";
@@ -152,20 +175,47 @@
               })(cell,r,c,i),false);
           }
       }
+        document.body.appendChild(grid);
       return grid;
     }
+
+  /*  else{
+    // var gamestate = document.getElementsByTagName('tr');
+var rows = document.getElementsByTagName('tr');
+      //   var  rows = gamestate.children;
+         console.log("rows....flag" ,flag);
+          for(var k= 0;k<rows.length;k++){
+           var cols = rows[0].children;
+              for(var j=0;j<cols.length;j++){
+                 i++;
+                 if(req[k][j]==0 )
+                  rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
+                else   if(req[k][j]==1)
+                  rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
+
+                       else rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
+
+                       rows[k].cols[j].addEventListener('click',(function(el,k,j,i){
+                           return function(){
+                               callback(el,k,j,i);
+                           }
+                       })(rows[k].cols[j],k,j,i),false);
+
+
+                      // return grid;
+
+              }
+
+         }
+        // return grid;
+
+    }
+    */
      }
 
-     function toColor(player){
-      if(player === 1)
-        return 'black';
-      else if(player == 2)
-        return 'orange';
-      else
-        return 'green';
-    }
 
 
+}
     </script>
     <p id="message"></p>
   </body>

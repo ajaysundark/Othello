@@ -114,7 +114,7 @@ app.post('/move',function(req,res){
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
     console.log("New move: ",newtable);
 
-  if(newtable==false){
+  if(newtable==false || GAME.turn != req.body.player){
     console.log("it is a invalid move");
   }
   else{
@@ -125,7 +125,7 @@ app.post('/move',function(req,res){
           GAME.turn = (req.body.player == 1) ? 2 : 1;
           console.log("Turn: "+GAME.turn);
           console.log(GAME);
-          postBoard(GAME);
+          postBoard(GAME,1);
       }
   }
 });
@@ -173,7 +173,7 @@ io.sockets.on('connection', function(socket){
     if(game.players.length === 2){
       game.turn = 1;
       //initGame();
-      postBoard(game);
+      postBoard(game,0);
     }
   });
 });
@@ -202,9 +202,10 @@ function gameEnd(game, winner){
   });
 }
 
-function postBoard(game){
+function postBoard(game,flag){
   game.players.map(function(player){
-    player.emit('board', {board: game.board, turn: game.turn});
+    console.log("hh ",flag);
+    player.emit('board', {board: game.board, turn: game.turn, flag: flag });
   });
 }
 
