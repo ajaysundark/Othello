@@ -13,6 +13,11 @@ __Heroku URL:__ _url_
 
 __Argument of ambition:__
 _Briefly argue why this was a technically ambitious project_
+Being a two player game, Othello is played in alternate turns where one player must make a valid move to affect the state of the game. Following points make the project technically ambitious:
+- Connecting the players via sockets and giving them an exclusive board on which they play. 
+- Each play involves validating multiple rules e.g. if the right player is making the move, if the move is valid. The state of board is not changed unless all the rules pass validation.
+- Game engine on server relies on a recursive algorithm to determine all the boxes on the board that are affected by the previous move. All this while, live scores have to be maintained and at the end of the game, a winner has to be determined based on who has the higher number of his coins on the board.
+- Multiple different styles of APIs have been used for the following purposes:
 
 __Argument of execution:__
 _Briefly argue why this was a well executed project_
