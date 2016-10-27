@@ -18,7 +18,8 @@ Being a two player game, Othello is played in alternate turns where one player m
 
 - Algorithm to implement Othello rule engine is complex.
 - Two players have to be given an exclusive board on which they play. 
-- Each play involves validating multiple rules e.g. if the right player is making the move, if the move is valid. - The state of board is not changed unless all the rules pass validation.
+- Each play involves validating multiple rules e.g. if the right player is making the move, if the move is valid. 
+- The state of board is not changed unless all the rules pass validation.
 - Maintaining live scores and then towards the end of the game declaring the winner based on who has the highest number of coins on the board.
 
 __Argument of execution:__
