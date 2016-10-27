@@ -67,41 +67,13 @@
       });
     });
 
-/*
-    function sendHand(x, y){
-      // add send code
-    }
-*/
     function display(message){
       $('#message').html(message);
     }
 
-/*
-    function drawBoard(board){
-      // add own logic
-    }
-
-
-    function clickbind(board, player){
-        //$square.click(function(){ sendHand(x, y); });
-        //$stone.click(function(){ sendHand(x, y); });
-      });
-    }
-*/
     function creategrid (req, playerno){
-        console.log("Received Board : ",req);
-        console.log("Received playerno : ", playerno);
-    /*var oldgrid = document.getElementsByTagName('table');
-    if(oldgrid) {
-            oldgrid.remove();
-    } */
-
-    var lastClicked;
-    var grid = clickableGrid(8,8,function(el,row,col,i){
-    console.log("You clicked on element:",el);
-    console.log("You clicked on row:",row);
-    console.log("You clicked on col:",col);
-    console.log("You clicked on item #:",i);
+      var lastClicked;
+      var grid = clickableGrid(8,8,function(el,row,col,i){
       el.className='clicked';
       var coordinates = { "rows":row,
                         "cols":col,
@@ -116,7 +88,6 @@
       });
 
       if (lastClicked) {
-
         lastClicked.className='';
       }
       lastClicked = el;
@@ -129,7 +100,6 @@
   function clickableGrid( rows, cols, callback ){
       var i=0;
       var grid = document.createElement('table');
-//      grid.setAttribute("id", "gameboard");
       grid.style.borderSpacing = "15px";
       grid.style.backgroundImage="url('/client/img/map.jpg')"
       grid.className = 'grid';
@@ -140,21 +110,22 @@
               i++;
                 console.log(req[r][c]);
                if(req[r][c]==0)
-              cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
-            else   if(req[r][c]==1)
-              cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
-
-                   else cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
+                cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
+              else
+                if(req[r][c]==1)
+                  cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
+                else
+                  cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
               cell.addEventListener('click',(function(el,r,c,i){
-                  return function(){
-                      callback(el,r,c,i);
-                  }
+              return function(){
+                callback(el,r,c,i);
+              }
               })(cell,r,c,i),false);
           }
       }
       return grid;
     }
-     }
+}
 
      function toColor(player){
       if(player === 1)
