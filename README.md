@@ -32,6 +32,7 @@ __Argument of execution:__
 - Leaderboard page uses get API to get statistics.
 - Signup and login features have been implemented using APIs.
 - A spectator mode has been provided where the spectators can watch the game in real time. We made use of sockets to implement spectator mode.
+- MongoDB has been used to store statistics and user information.
 
 ## Description ##
 For this module you will be making a multi-user, online game using Express,
