@@ -74,10 +74,11 @@ app.post('/move',function(req,res){
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
 
   if(newtable==false || GAME.turn != req.body.player){
-    console.log("it is a invalid move");
+    delete newtable;
+    console.log("Invalid move by "+req.body.player+" on turn: "+GAME.turn);
   }
   else{
-      console.log("it is a valid move");
+      console.log("It is a valid move");
       emptyflag=0;
       for(i=0;i<7;i++){
         for(j=0;j<7;j++){
@@ -127,6 +128,7 @@ app.post('/move',function(req,res){
         today = mm+'/'+dd+'/'+yyyy;
         console.log(today);
         //
+        postBoard(GAME);
         gameEnd(GAME,winner,count1,count2,today);
       }
       else {
@@ -174,7 +176,7 @@ io.sockets.on('connection', function(socket){
     if(game.players.length === 2){
       game.turn = 1;
       //initGame();
-      postBoard(game,0);
+      postBoard(game);
     }
   });
   socket.on('spec room', function(){
@@ -207,10 +209,9 @@ function gameEnd(game, winner,count1,count2,today){
   });
 }
 
-function postBoard(game,flag){
+function postBoard(game){
   game.players.map(function(player){
-    console.log("hh ",flag);
-    player.emit('board', {board: game.board, turn: game.turn, flag: flag });
+    player.emit('board', {board: game.board, turn: game.turn });
   });
   spec.map(function(sp){
     sp.emit('spec', {board: game.board});

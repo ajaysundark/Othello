@@ -44,6 +44,7 @@
       <div id='gamediv'>
 
       </div>
+      <div id="live"></div>
     </div>
     <script>
     var latest_board;
@@ -59,18 +60,28 @@
         latest_board = data.board;
       var  flag= data.flag;
         //drawBoard(data.board);
-        creategrid(data.board, player,flag);
+        creategrid(data.board, player);
         display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
       });
 
-      socket.on('game end', function(data){
-        if(data.winner === 0)
-          display('GAME SET (DRAW)');
-        else
-          display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
-    	      ' WINNER: ' + toColor(data.winner) + ')');
-      });
-    });
+      socket.on('game_end', function(data){
+    if(data.count1>data.count2){
+      high = data.count1;
+      low = data.count2;
+    }
+    else {
+      high=data.count2;
+      low=data.count1;
+    }
+    if(data.winner!=0){
+      var livescore = "GAME OVER! "+toColor(data.winner)+" wins. Score: "+high+"-"+low;
+    }
+    else{
+      var livescore = "ITS A TIE!"
+    }
+    document.getElementById("live").innerHTML = livescore;
+  });
+});
     function toColor(player){
      if(player === 1)
        return 'black';
@@ -84,142 +95,87 @@
       $('#message').html(message);
     }
 
-/*
-    function drawBoard(board){
-      // add own logic
-    }
+    function creategrid(drawthis,playerid){
+      var lastClicked;
+      var grid = clickableGrid(8,8,drawthis,function(el,row,col,i){
+          console.log("You clicked on row:",row);
+          console.log("You clicked on col:",col);
 
+          var coordinates = { "rows":row,
+                            "cols":col,
+                            "state":drawthis,
+                          "player": playerid};
 
-    function clickbind(board, player){
-        //$square.click(function(){ sendHand(x, y); });
-        //$stone.click(function(){ sendHand(x, y); });
-      });
-    }
-*/
-    function creategrid (req, playerno,flag){
-        console.log("Received Board : ",req);
-        console.log("Received playerno : ", playerno);
-
-    /*var oldgrid = document.getElementsByTagName('table');
-    if(oldgrid) {
-            oldgrid.remove();
-    } */
-
-    var lastClicked;
-    var grid = clickableGrid(8,8,function(el,row,col,i){
-    console.log("You clicked on element:",el);
-    console.log("You clicked on row:",row);
-    console.log("You clicked on col:",col);
-    console.log("You clicked on item #:",i);
-    //  console.log("flag : ",flag);
-      el.className='clicked';
-      var coordinates = { "rows":row,
-                        "cols":col,
-                        "state":req,
-                      "player": playerno};
-      $.ajax({
-       type: "POST",
-       data :JSON.stringify(coordinates),
-       url: "/move",
-       contentType: "application/json",
-       success: printsuccess()
+          var reqst = $.ajax({
+           type: "POST",
+           data :JSON.stringify(coordinates),
+           url: "/move",
+           contentType: "application/json",
+           success: printsuccess()
+          });
+          reqst.abort();
       });
 
-    //  if (lastClicked) {
-      //  lastClicked.className='';
-
-
-      //}
-      //lastClicked = el;
-  });
-
-  function printsuccess(){
-    console.log("success");
-  }
-
-  function clickableGrid( rows, cols, callback ){
-      var i=0;
-
-    //  if(flag==0 )
-      {
-        //  var e = document.getElementsByTagName('table')[0];
-        //  e.removeChild('body');
-
-
-       var gamediv1 = document.getElementById('gamediv');
-
-       if(gamediv1){
-         gamediv1.innerHTML = '';
-       }
-
-      var grid = document.createElement('table');
-      grid.style.borderSpacing = "15px";
-      grid.style.border = "none";
-      grid.style.backgroundImage="url('/client/img/map.jpg')";
-      grid.className = 'grid';
-      for (var r=0;r<rows;++r){
-          var tr = grid.appendChild(document.createElement('tr'));
-          for (var c=0;c<cols;++c){
-              var cell = tr.appendChild(document.createElement('td'));
-              i++;
-                console.log(req[r][c]);
-               if(req[r][c]==0)
-                cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
-              else
-                if(req[r][c]==1)
-                  cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
-                else
-                  cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
-              cell.addEventListener('click',(function(el,r,c,i){
-              return function(){
-                callback(el,r,c,i);
-              }
-              })(cell,r,c,i),false);
-          }
+      var gamediv = document.getElementById('gamediv');
+      if(gamediv){
+        gamediv.innerHTML='';
       }
-      gamediv1.appendChild(grid);
-      return grid;
-    }
-}
+      gamediv.appendChild(grid);
 
-  /*  else{
-    // var gamestate = document.getElementsByTagName('tr');
-var rows = document.getElementsByTagName('tr');
-      //   var  rows = gamestate.children;
-         console.log("rows....flag" ,flag);
-          for(var k= 0;k<rows.length;k++){
-           var cols = rows[0].children;
-              for(var j=0;j<cols.length;j++){
-                 i++;
-                 if(req[k][j]==0 )
-                  rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
-                else   if(req[k][j]==1)
-                  rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
-
-                       else rows[k].cols[j].innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
-
-                       rows[k].cols[j].addEventListener('click',(function(el,k,j,i){
-                           return function(){
-                               callback(el,k,j,i);
-                           }
-                       })(rows[k].cols[j],k,j,i),false);
-
-
-                      // return grid;
-
-              }
-
-         }
-        // return grid;
+      blackcount = 0;
+      orangecount = 0;
+      for(i=0;i<8;i++){
+        for(j=0;j<8;j++){
+          if(drawthis[i][j]==1){
+            blackcount++;
+          }
+          else if (drawthis[i][j]==2){
+            orangecount++;
+          }
+        }
+      }
+      var livescore = "Live Score - Black: "+blackcount+" Orange: "+orangecount;
+      document.getElementById("live").innerHTML = livescore;
 
     }
-    */
-     }
+
+
+    function clickableGrid( rows, cols, drawthis, callback ){
+        var i=0;
+        var grid = document.createElement('table');
+        grid.style.borderSpacing = "15px";
+        grid.style.backgroundImage="url('/client/img/map.jpg')";
+        grid.className = 'grid';
+        for (var r=0;r<rows;++r){
+            var tr = grid.appendChild(document.createElement('tr'));
+            for (var c=0;c<cols;++c){
+                var cell = tr.appendChild(document.createElement('td'));
+                if(drawthis[r][c]==0){
+                  cell.innerHTML = '<img src=\'/client/img/piece_white.png\' height="60" width="60">';
+                }
+                else if(drawthis[r][c]==1){
+                  cell.innerHTML = '<img src=\'/client/img/piece_black.png\' height="60" width="60">';
+                }
+                else {
+                  cell.innerHTML = '<img src=\'/client/img/piece_red.png\' height="60" width="60">';
+                }
+                cell.addEventListener('click',(function(el,r,c,i){
+                    return function(){
+                        callback(el,r,c,i);
+                    }
+                })(cell,r,c,i),false);
+            }
+        }
+        return grid;
+    }
+
+    function printsuccess(){
+      console.log("success");
+    }
 
 
 
+        </script>
 
-    </script>
-
-  </body>
-</html>
+      </body>
+    </html>
