@@ -1,5 +1,5 @@
 # Module 2 group project #
-__Submitted by:__ _team_name_
+__Submitted by:__ WebCrows
 
 __Team members:__
 
@@ -8,7 +8,6 @@ __Team members:__
 - balan016@umn.edu
 - rich1044@umn.edu
 - karup002@umn.edu
-- ...
 
 __Heroku URL:__ _url_
 
