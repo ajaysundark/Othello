@@ -30,6 +30,8 @@
               <ul class="nav navbar-nav">
                 <li class="active"><a href="/client/login.html"> Home<span class="sr-only">(current)</span></a></li>
                 <li><a href="/client/about.html">About</a></li>
+                <li><a href="/client/spectator.html">Spectate</a></li>
+                <li><a href="/client/statistics.html">Statistics</a></li>
               </ul>
             </div>
           </div>
@@ -37,44 +39,46 @@
     </div>
     <div class="container">
       <header>
-        <h2>Live Game</h2>
+        <h2>Hello Puny Humans !</h2>
       </header>
-      <div>
+      <p id="message"></p>
+      <div id='gamediv'>
+
       </div>
     </div>
     <script>
     var latest_board;
     var socket = io();
+
     socket.emit('spec room');
-    socket.on('spec', function(data){
-      latest_board = data.board;
-      //drawBoard(data.board);
-      creategrid(data.board);
-    });
-
-
+      socket.on('spec', function(data){
+        latest_board = data.board;
+        //drawBoard(data.board);
+        creategrid(data.board);
+      });
 
     function creategrid (req){
-      var lastClicked;
-      var grid = clickableGrid(8,8,function(el,row,col,i){
+    var lastClicked;
+    var grid = clickableGrid(8,8,function(el,row,col,i){
       el.className='clicked';
       var coordinates = { "rows":row,
                         "cols":col,
                         "state":req,
                       "player": playerno};
-
-      if (lastClicked) {
-        lastClicked.className='';
-      }
-      lastClicked = el;
   });
 
-  document.body.appendChild(grid);
   function clickableGrid( rows, cols, callback ){
       var i=0;
+      {
+       var gamediv1 = document.getElementById('gamediv');
+
+       if(gamediv1){
+         gamediv1.innerHTML = '';
+       }
+
       var grid = document.createElement('table');
       grid.style.borderSpacing = "15px";
-      grid.style.backgroundImage="url('/client/img/map.jpg')"
+      grid.style.backgroundImage="url('/client/img/map.jpg')";
       grid.className = 'grid';
       for (var r=0;r<rows;++r){
           var tr = grid.appendChild(document.createElement('tr'));
@@ -96,10 +100,11 @@
               })(cell,r,c,i),false);
           }
       }
+      gamediv1.appendChild(grid);
       return grid;
     }
 }
+}
     </script>
-    <p id="message"></p>
   </body>
 </html>
