@@ -23,7 +23,15 @@ Being a two player game, Othello is played in alternate turns where one player m
 - Maintaining live scores and then towards the end of the game declaring the winner based on who has the highest number of coins on the board.
 
 __Argument of execution:__
-_Briefly argue why this was a well executed project_
+
+- We thought of impelmenting the Othello rule engine using recursion and we were successful in doing this.
+- We were able to provide an exclusive board for two players. We created a game object using sockets.
+- We were able to implement the turn logic successfully which is essential to a turn based game.
+- The client and server processing is independent of each other.
+- Clients post move to the server using post APIs.
+- Leaderboard page uses get API to get statistics.
+- Signup and login features have been implemented using APIs.
+- A spectator mode has been provided where the spectators can watch the game in real time. We made use of sockets to implement spectator mode.
 
 ## Description ##
 For this module you will be making a multi-user, online game using Express,
