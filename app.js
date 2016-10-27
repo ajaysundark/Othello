@@ -34,11 +34,11 @@ app.post('/signupX', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
   var password_confirmation = req.body.confirmation;
-    
+
   console.log("username: ", req.body.username);
   console.log("password: ", req.body.password)
   console.log("confirmation: ", req.body.confirmation);
-    
+
   createUser(username, password, password_confirmation, function(err, user){
     var status = true;
     var redirect = true;
@@ -49,7 +49,7 @@ app.post('/signupX', function(req, res){
       redirectURL = (__dirname + '/client/error.html');
       /*res.sendFile(__dirname + '/client/error.html');*/
     }
-    
+
     res.send(JSON.stringify({success: status, redirect: redirect, url: redirectURL}));
   });
 });

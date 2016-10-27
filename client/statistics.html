@@ -39,8 +39,44 @@
       <header>
         <h2>Statistics of the game played till now:</h2>
       </header>
-      <div>
-      </div>
+      <table  class = "table table-bordered table-inverse" id = 'stats' style="border: 1px solid black ">
+       <thead class="thead-inverse">
+         <tr>
+
+            <th> Game Winner </th>
+            <th> Count of Coins for player 1  </th>
+            <th> Count of Coins for player 2 </th>
+        </tr>
+      </thead>
+      </table>
+
+      <script>
+
+      window.onload = printstats();
+        function printstats(){
+
+      $.ajax({
+        url: '/statistics',
+        type: 'GET',
+        contentType:'application/json',
+        data: {get_param: 'value'},
+        dataType:'json',
+        success: function(data) {
+          //  console.log(data);
+        $.each(data, function(index, element) {
+              $('#stats').append('<tr scope="row"> <td>'+   element.winner + ' </td> <td> '+element.count1 + '</td> <td>' + element.count2+'</td></tr>');
+
+            });
+
+        },
+        error: function(data) {
+                alert('error!');
+             }
+        });
+
+      }
+      </script>
     </div>
   </body>
+
 </html>
