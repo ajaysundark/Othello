@@ -20,6 +20,9 @@ app.get('/signup',function(req, res) {
 app.get('/gamearea',function(req, res) {
     res.sendFile(__dirname + '/client/gamearea.html');
 });
+app.get('/spectator',function(req, res) {
+    res.sendFile(__dirname + '/client/spectator.html');
+});
 app.get('/login',function(req, res) {
     res.sendFile(__dirname + '/client/login.html');
 });
@@ -58,10 +61,7 @@ app.post('/loginX', function(req, res){
 app.post('/move',function(req,res){
   var row = req.body.rows;
   var col = req.body.cols;
-  console.log("received "+ row);
-  console.log("received "+ col);
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
-    console.log("New move: ",newtable);
 
   if(newtable==false){
     console.log("it is a invalid move");
@@ -72,8 +72,6 @@ app.post('/move',function(req,res){
       if(GAME) {
           GAME.board = newtable;
           GAME.turn = (req.body.player == 1) ? 2 : 1;
-          console.log("Turn: "+GAME.turn);
-          console.log(GAME);
           postBoard(GAME);
       }
   }
@@ -87,6 +85,7 @@ serv.listen(2000);
 var io = require('socket.io')(serv,{});
 
 var GAME;
+var spec = [];
 initGame();
 
 io.sockets.on('connection', function(socket){
@@ -95,44 +94,23 @@ io.sockets.on('connection', function(socket){
     game.players.push(socket);
 
     socket.emit('accept', {player: player, board: game.board});
-/*
-    socket.on('hand', function(hand){
-      var x = parseInt(hand[0]), y = parseInt(hand[1]);
-      var conds = {
-      	turn        : game.turn === player,
-      	emptySquare : othello.getOccupant(game.board, x, y) === 0,
-      	reversible  : othello.handReverseNum(game.board, game.turn, x, y) > 0
-      }
-      if( conds.turn && conds.emptySquare && conds.reversible){
-      	game.board = othello.hand(game.board, game.turn, x, y);
-      	game.turn  = othello.nextPlayer(game.board, game.turn);
-      	postBoard(game);
-      	if( game.turn === 0 )
-      	  gameEnd(game, othello.winner(game.board));
-      }
-    });*/
 
     socket.on('disconnect', function(){
       if(GAME.players[0] === socket)
 	       initGame();
       else
-	       //gameEnd(game, othello.anotherPlayer(player));
          console.log();
     });
 
     if(game.players.length === 2){
       game.turn = 1;
-      //initGame();
       postBoard(game);
     }
   });
+  socket.on('spec room', function(){
+    spec.push(socket);
+  });
 });
-
-
-function handler (req, res) {
-  var path = url.parse(req.url).pathname;
-  page.urlhandler(path, res);
-}
 
 function initGame(){
   GAME = {
@@ -154,6 +132,9 @@ function gameEnd(game, winner){
 function postBoard(game){
   game.players.map(function(player){
     player.emit('board', {board: game.board, turn: game.turn});
+  });
+  spec.map(function(sp){
+    sp.emit('spec', {board: game.board});
   });
 }
 

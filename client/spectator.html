@@ -37,7 +37,7 @@
     </div>
     <div class="container">
       <header>
-        <h2>Hello Puny Humans !</h2>
+        <h2>Live Game</h2>
       </header>
       <div>
       </div>
@@ -45,33 +45,16 @@
     <script>
     var latest_board;
     var socket = io();
-
-    socket.emit('enter room');
-    socket.on('accept', function(data){
-      var player = data.player;
-      var board = data.board;
-      //clickbind(data.board, player);
-      socket.on('board', function(data){
-        latest_board = data.board;
-        //drawBoard(data.board);
-        creategrid(data.board, player);
-        display('TURN: ' + toColor(data.turn) + ' (' + 'YOU: '+ toColor(player) + ')');
-      });
-
-      socket.on('game end', function(data){
-        if(data.winner === 0)
-          display('GAME SET (DRAW)');
-        else
-          display('GAME SET ('+ data.points[0] + '-' + data.points[1] +
-    	      ' WINNER: ' + toColor(data.winner) + ')');
-      });
+    socket.emit('spec room');
+    socket.on('spec', function(data){
+      latest_board = data.board;
+      //drawBoard(data.board);
+      creategrid(data.board);
     });
 
-    function display(message){
-      $('#message').html(message);
-    }
 
-    function creategrid (req, playerno){
+
+    function creategrid (req){
       var lastClicked;
       var grid = clickableGrid(8,8,function(el,row,col,i){
       el.className='clicked';
@@ -79,13 +62,6 @@
                         "cols":col,
                         "state":req,
                       "player": playerno};
-      $.ajax({
-       type: "POST",
-       data :JSON.stringify(coordinates),
-       url: "/move",
-       contentType: "application/json",
-       success: printsuccess()
-      });
 
       if (lastClicked) {
         lastClicked.className='';
@@ -93,9 +69,6 @@
       lastClicked = el;
   });
 
-  function printsuccess(){
-    console.log("success");
-  }
   document.body.appendChild(grid);
   function clickableGrid( rows, cols, callback ){
       var i=0;
@@ -126,17 +99,6 @@
       return grid;
     }
 }
-
-     function toColor(player){
-      if(player === 1)
-        return 'black';
-      else if(player == 2)
-        return 'orange';
-      else
-        return 'green';
-    }
-
-
     </script>
     <p id="message"></p>
   </body>
