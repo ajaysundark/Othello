@@ -74,23 +74,31 @@ app.get('/error',function(req, res) {
     //res.render('login');
     res.sendFile(__dirname + '/client/error.html');
 });
-//app.get('/game',function(req, res) {
-//    res.sendFile(__dirname + '/client/grid.html');
-//});
 
 app.post('/signupX', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
-  var password_confirmation = req.body.password_confirmation;
-
+  var password_confirmation = req.body.confirmation;
+    
+  console.log("username: ", req.body.username);
+  console.log("password: ", req.body.password)
+  console.log("confirmation: ", req.body.confirmation);
+    
   createUser(username, password, password_confirmation, function(err, user){
+    var status = true;
+    var redirect = true;
+    var redirectURL = '/';
     if (err) {
-      res.sendFile(__dirname + '/client/error.html');
-    } else {
-      res.redirect('/');
+      status = false;
+      redirect = true;
+      redirectURL = (__dirname + '/client/error.html');
+      /*res.sendFile(__dirname + '/client/error.html');*/
     }
+    
+    res.send(JSON.stringify({success: status, redirect: redirect, url: redirectURL}));
   });
 });
+
 app.post('/loginX', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
