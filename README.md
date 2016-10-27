@@ -11,7 +11,7 @@ __Team members:__
 
 __Heroku URL:__
 
-https://webcrowsothello.herokuapp.com/
+https://wcothello.herokuapp.com/
 
 __Argument of ambition:__
 
