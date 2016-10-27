@@ -33,14 +33,24 @@ app.get('/error',function(req, res) {
 app.post('/signupX', function(req, res){
   var username = req.body.username;
   var password = req.body.password;
-  var password_confirmation = req.body.password_confirmation;
-
+  var password_confirmation = req.body.confirmation;
+    
+  console.log("username: ", req.body.username);
+  console.log("password: ", req.body.password)
+  console.log("confirmation: ", req.body.confirmation);
+    
   createUser(username, password, password_confirmation, function(err, user){
+    var status = true;
+    var redirect = true;
+    var redirectURL = '/';
     if (err) {
-      res.sendFile(__dirname + '/client/error.html');
-    } else {
-      res.redirect('/');
+      status = false;
+      redirect = true;
+      redirectURL = (__dirname + '/client/error.html');
+      /*res.sendFile(__dirname + '/client/error.html');*/
     }
+    
+    res.send(JSON.stringify({success: status, redirect: redirect, url: redirectURL}));
   });
 });
 
@@ -63,7 +73,7 @@ app.post('/move',function(req,res){
   var col = req.body.cols;
   newtable = isValidMove(req.body.state, req.body.player,req.body.rows,req.body.cols);
 
-  if(newtable==false){
+  if(newtable==false || GAME.turn != req.body.player){
     console.log("it is a invalid move");
   }
   else{
@@ -72,7 +82,7 @@ app.post('/move',function(req,res){
       if(GAME) {
           GAME.board = newtable;
           GAME.turn = (req.body.player == 1) ? 2 : 1;
-          postBoard(GAME);
+          postBoard(GAME, 1);
       }
   }
 });
@@ -104,7 +114,8 @@ io.sockets.on('connection', function(socket){
 
     if(game.players.length === 2){
       game.turn = 1;
-      postBoard(game);
+      //initGame();
+      postBoard(game,0);
     }
   });
   socket.on('spec room', function(){
@@ -129,9 +140,10 @@ function gameEnd(game, winner){
   });
 }
 
-function postBoard(game){
+function postBoard(game,flag){
   game.players.map(function(player){
-    player.emit('board', {board: game.board, turn: game.turn});
+    console.log("hh ",flag);
+    player.emit('board', {board: game.board, turn: game.turn, flag: flag });
   });
   spec.map(function(sp){
     sp.emit('spec', {board: game.board});
