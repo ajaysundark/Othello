@@ -32,16 +32,46 @@
             </nav>
         </div>
         <div class="container">
-    			<div id="signUpDiv">
-            <form action='/signupX' method='post' anme='myform'>
-    				      Username: <input name='username' type="text" class="form-control"></input><br />
-    				      Password: <input name='password' type="password" class="form-control"></input><br />
-                  Password (confirmation): <input name='password_confirmation' type='password' class="form-control"></input>
-                  <br />
-                  <br />
-    				      <button type="submit" id="signDiv-signUp" class="btn btn-primary">Sign Up</button>
-            </form>
+    		<div id="signUpDiv">
+                Username: <input name='username' type="text" id="signupuser" class="form-control"></input><br />
+    			Password: <input name='password' type="password" id="signuppwd" class="form-control"></input><br />
+                Password (confirmation): <input name='confirmation' type='password' id="confirm" class="form-control"></input>
+                    <br />
+                    <br />
+                    <button id="signDiv-signUp" class="btn btn-primary">Sign Up</button>
         	</div>
     		</div>
+          <script>
+              (function() {
+                $('#signDiv-signUp').on('click', function() {
+                   var user = $('#signupuser').val();
+                   var pwd = $('#signuppwd').val();
+                   var confirm = $('#confirm').val();
+                    console.log("User ", user, "pwd ", pwd, "confirm ", confirm);
+                   var obj = {
+                       username : user,
+                       password : pwd,
+                       confirmation : confirm
+                   };
+                   
+                  $.ajax({
+                    url: '/signupX',
+                    type: 'POST',
+                    contentType:'application/json',
+                    data: JSON.stringify(obj),
+                    dataType:'json',
+                    success: function(data) {
+                        console.log(data);
+                        if(data.redirect && data.url) {
+                            window.location.href = data.url;
+                        }
+                    },
+                    error: function(data) {
+                            alert('error!');
+                         }
+                    });  
+                   });
+	           })();
+          </script>
       </body>
     </html>
