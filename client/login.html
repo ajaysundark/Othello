@@ -31,17 +31,17 @@
           </div>
         </nav>
     </div>
-    <div class="container">
-      <div id="signUpDiv">
-        <form action='/signupX' method='post' name='myform'>
-              Username: <input name='username' type="text" class="form-control"></input><br />
-              Password: <input name='password' type="password" class="form-control"></input><br />
-              Password (confirmation): <input name='password_confirmation' type='password' class="form-control"></input>
-              <br />
-              <br />
-              <button type="submit" id="signDiv-signUp" class="btn btn-primary">Sign Up</button>
-        </form>
+        <div class="container">
+         <div id="signInDiv">
+            <form action='/loginX' method='post'>
+           Username: <input name="username" type="text" class="form-control"></input><br>
+           Password: <input name="password" type="password" class="form-control"></input>
+            <br />
+            <br />
+            <button type="submit" id="signDiv-signIn" class="btn btn-primary">Log In</button>
+            <button type="button" id="signDiv-signIn" class="btn btn-primary" onclick="location.href='/signup'")>Sign Up</button>
+          </form>
+       </div>
       </div>
-    </div>
   </body>
 </html>

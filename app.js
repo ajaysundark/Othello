@@ -117,6 +117,7 @@ io.sockets.on('connection', function(socket){
 	       initGame();
       else
 	       //gameEnd(game, othello.anotherPlayer(player));
+         console.log();
     });
 
     if(game.players.length === 2){
