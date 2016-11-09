@@ -1,6 +1,6 @@
 var ejs = require('ejs');
 var mongojs = require("mongojs");
-var db = mongojs('mongodb://webcrows:umncsfall16@ds019068.mlab.com:19068/webcrowsdb', ['account','progress']);
+var db = mongojs('yourdb');
 var express = require('express');
 var app = express();
 var bodyparser = require('body-parser');
